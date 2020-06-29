@@ -10,6 +10,7 @@ function sleep(ms) {
     return new Promise(resolve => setTimeout(resolve, ms));
 }
 
+const fid = 1
 var setTimeOut = []
 
 function callCommand(pid, vol, time){
@@ -73,9 +74,6 @@ function calculateTimeAfterClose(closeTime,time){
     }
     return [strCloseHour,strCloseMinute]
 }
-
-var state = 'idle'
-
 
 var mongo_uri = "mongodb+srv://waris46842:Gamerpg46842@next-radio.scrbg.mongodb.net/radio?retryWrites=true&w=majority"
 mongoose.Promise = global.Promise;
@@ -219,7 +217,7 @@ app.delete('/radio/:id', async (req, res) => {
 });
 
 app.put('/boxStartTime/:time', async (req, res) => {
-    const fid = '1'
+    // const fid = '1'
     const payload = {"musicBeforeOpen" : req.params.time}
     try {
         const radios = await Radio.findById(fid)
@@ -308,7 +306,7 @@ app.put('/boxStartTime/:time', async (req, res) => {
 })
 
 app.put('/boxCloseTime/:time', async (req, res) => {
-    const fid = '1'
+    // const fid = '1'
     const payload = {"musicAfterClose" : req.params.time}
     try {
         const radios = await Radio.findById(fid)
@@ -396,7 +394,7 @@ app.put('/boxCloseTime/:time', async (req, res) => {
 })
 
 app.put('/silentBeforeOpen/:time', async (req, res) => {
-    const fid = '1'
+    // const fid = '1'
     const payload = {"silentBeforeOpen" : req.params.time}
     try {
         const radios = await Radio.findById(fid)
@@ -484,7 +482,7 @@ app.put('/silentBeforeOpen/:time', async (req, res) => {
 })
 //not sure
 app.put('/silentAfterClose/:time', async (req, res) => {
-    const fid = '1'
+    // const fid = '1'
     const payload = {"silentAfterClose" : req.params.time}
     try {
         const radio = await Radio.findById(fid)
@@ -571,7 +569,7 @@ app.put('/silentAfterClose/:time', async (req, res) => {
 })
 
 app.put('/mainVolume/:vol', async (req, res) => {
-    const fid = '1'
+    // const fid = '1'
     const payload = {"mainVolume" : req.params.vol}
     try {
         const radio = await Radio.findByIdAndUpdate(fid, {$set: payload})
@@ -582,7 +580,7 @@ app.put('/mainVolume/:vol', async (req, res) => {
 })
 
 app.put('/jingleVolume/:vol', async (req, res) => {
-    const fid = '1'
+    // const fid = '1'
     const payload = {"jingleVolume" : req.params.vol}
     try {
         const radio = await Radio.findByIdAndUpdate(fid, {$set: payload})
@@ -593,7 +591,7 @@ app.put('/jingleVolume/:vol', async (req, res) => {
 })
 
 app.put('/musicVolume/:vol', async (req, res) => {
-    const fid = '1'
+    // const fid = '1'
     const payload = {"musicVolume" : req.params.vol}
     try {
         const radio = await Radio.findByIdAndUpdate(fid, {$set: payload})
@@ -604,7 +602,7 @@ app.put('/musicVolume/:vol', async (req, res) => {
 })
 
 app.put('/spotVolume/:vol', async (req, res) => {
-    const fid = '1'
+    // const fid = '1'
     const payload = {"spotVolume" : req.params.vol}
     try {
         const radio = await Radio.findByIdAndUpdate(fid, {$set: payload})
@@ -615,7 +613,7 @@ app.put('/spotVolume/:vol', async (req, res) => {
 })
 
 app.put('/storeIdentityVolume/:vol', async (req, res) => {
-    const fid = '1'
+    // const fid = '1'
     const payload = {"storeIdentityVolume" : req.params.vol}
     try {
         const radio = await Radio.findByIdAndUpdate(fid, {$set: payload})
@@ -627,7 +625,7 @@ app.put('/storeIdentityVolume/:vol', async (req, res) => {
 
 app.put('/openCloseTime/', async (req, res) => {
     const week = ['Sun','Mon','Tue','Wed','Thu','Fri','Sat']
-    const fid = '1'
+    // const fid = '1'
     const day = req.body.day
     const number = week.indexOf(day)
     const openHour = req.body.open.slice(0,2)
@@ -678,7 +676,7 @@ app.put('/openCloseTime/', async (req, res) => {
 })
 
 app.put('/addHoliday/:day', async (req, res) => {
-    const fid = '1'
+    // const fid = '1'
     try{
         const radios = await Radio.update({"_id": fid}, {
             $push: {
@@ -691,7 +689,7 @@ app.put('/addHoliday/:day', async (req, res) => {
 })
 
 app.put('/editCrossFade:val', async (req, res) => {
-    const fid = '1'
+    // const fid = '1'
     value = req.params.val
     try{
         const radios = await Radio.findByIdAndUpdate(fid, {$set: {'crossFade' : value}})
@@ -716,7 +714,7 @@ app.get('/stopPlaying', async (req, res) => {
 })
 
 app.get('/play', async (req, res) => {
-    const fid = '1'
+    // const fid = '1'
     if(true){
         state = 'play'
         try{
@@ -763,29 +761,29 @@ app.get('/play', async (req, res) => {
 }),
 
 app.put('/selectSpeechSoundBeforeOpen/:sound', async (req,res) => {
-    const fid = '1'
+    // const fid = '1'
     const sound = req.params.sound
 
 }),
 
 app.put('/selectSpeechSoundAfterClose/:sound', async (req,res) => {
-    const fid = '1'
+    // const fid = '1'
     const sound = req.params.sound
 
 }),
 
 app.put('/editUploadLogFileSIze/:fileSize', async (req,res) => {
-    const fid = '1'
+    // const fid = '1'
     const fileSize = req.params.fileSize
 }),
 
 app.put('/resetVolumeTime/:number', async (req,res) => {
-    const fid = '1'
+    // const fid = '1'
     const number = req.params.number
 })
 
 app.put('/interrupt/:interruptFile', async (req,res) => {
-    const fid = '1'
+    // const fid = '1'
     const interruptFile = req.params.interruptFile
     client.publish("tk/demo",`interrupt ${interruptFile}`)
 })
