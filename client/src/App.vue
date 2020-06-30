@@ -50,24 +50,26 @@
     <button @click="selectSpeechSoundAfterClose()">Submit</button>
     <p>selectSpeechSoundAfterClose</p>
 
-    <input v-model="resetVolumeTime" placeholder="resetVolumeTime">
+    <!-- <input v-model="resetVolumeTime" placeholder="resetVolumeTime">
     <button @click="resetVolumeTime()">Submit</button>
-    <p>resetVolumeTime</p>
+    <p>resetVolumeTime</p> -->
 
-    <input v-model="uploadLogFileSize" placeHolder="uploadLogFileSize">
+    <!-- <input v-model="uploadLogFileSize" placeHolder="uploadLogFileSize">
     <button @click="editUploadLogFileSize()">Submit</button>
-    <p>editUploadLogFileSize</p>
-
-    <button @click="play()">Submit</button>
-    <p>play</p>
-
-    <button @click="stopPlaying()">Submit</button>
-    <p>stopPlaying</p>
+    <p>editUploadLogFileSize</p> -->
 
     <input v-model="interrupt" placeHolder="interrupt">
     <button @click="interruptFile()">Submit</button>
     <p>interruptFile</p>
 
+    <input v-model="heartbeatTime" placeholder="heartbeatTime">
+    <button @click="setHeartbeatTime()">Submit</button>
+    <p>setHeartbeatTime</p>
+
+    <input v-model="dateAutoSync" placeholder="dateAutoSync">
+    <input v-model="timeAutoSync" placeholder="timeAutoSync">
+    <button @click="setAutoSync()">Submit</button>
+    <p>setAutoSync</p>
   </div>
 </template>
 
@@ -177,33 +179,41 @@ export default {
       console.log(res)
     },
 
-    async editUploadLogFileSize() {
-      console.log(this.uploadLogFileLogSize);
-      let fileSize = this.uploadLogFileLogSize;
-      const res = await axios.put('http://localhost:5000/editUploadLogFileSIze' + fileSize)
-      console.log(res)
-    },
+    // async editUploadLogFileSize() {
+    //   console.log(this.uploadLogFileLogSize);
+    //   let fileSize = this.uploadLogFileLogSize;
+    //   const res = await axios.put('http://localhost:5000/editUploadLogFileSIze' + fileSize)
+    //   console.log(res)
+    // },
 
-    async resetVolumeTime() {
-      console.log(this.resetVolumeTime);
-      let number = this.resetVolumeTime;
-      const res = await axios.put('http://localhost:5000/resetVolumeTime' + number)
-      console.log(res)
-    },
-
-    play() {
-      axios.get('http://localhost:5000/play/')
-      //console.log(res)
-    },
-
-    stopPlaying() {
-      axios.get('http://localhost:5000/stopPlaying/')
-    },
+    // async resetVolumeTime() {
+    //   console.log(this.resetVolumeTime);
+    //   let number = this.resetVolumeTime;
+    //   const res = await axios.put('http://localhost:5000/resetVolumeTime' + number)
+    //   console.log(res)
+    // },
 
     interruptFile() {
       console.log(this.interrupt)
       let interruptFile = this.interrupt
       axios.put('http://localhost:5000/interrupt/' + interruptFile)
+    },
+
+    async setHeartbeatTime() {
+      console.log(this.heartbeatTime)
+      let time = this.heartbeatTime
+      const res = await axios.put('http://localhost:5000/setHeartbeatTime' + time)
+      console.log(res)
+    },
+
+    async setAutoSync() {
+      console.log(this.dateAutoSync)
+      console.log(this.timeAutoSync)
+      const date = this.dateAutoSync
+      const time = this.timeAutoSync
+      let payload = {'dateAutoSync':date,'timeAutoSync':time}
+      const res = await axios.put('http://localhost:5000/setAutoSync/',payload)
+      console.log(res)
     }
 
   }

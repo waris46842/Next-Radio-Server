@@ -6,22 +6,43 @@ const Radio = require('./models/radio')
 const File = require('./models/file')
 const Command = require('./models/command')
 
+setInterval(changeColor, 5000)
+
 function sleep(ms) {
     return new Promise(resolve => setTimeout(resolve, ms));
 }
 
 const fid = 1
-var setTimeOut = []
-
-function callCommand(pid, vol, time){
-    setTimeOut.push(setTimeout(function() {client.publish("tk/demo", `mpc volume ${vol}`); client.publish("tk/demo", `mpc play ${pid}`);}, time));
-}
 
 function calculateWaitTime(time){
     const minute = Math.floor(time)
     const second = time - minute
     const timeToWait = minute*60000 + second*100000
     return timeToWait
+}
+
+async function changeColor(){
+    const radios = await Radio.findById(fid)
+    const time = radios.activeLastTime
+    const length = Date.now()-time
+    let color
+    if(length <= 600000){
+        color = 'Green'
+    }
+    else if(length <= 10800000){
+        color = 'Yellow'
+    }
+    else if(length <= 86400000){
+        color = 'Red'
+    }
+    else if(length <= 259200000){
+        color = 'Gray'
+    }
+    else{
+        color = 'Black'
+    }
+    const payload = {'status':color}
+    const x = await Radio.findByIdAndUpdate(fid, {$set: payload})
 }
 
 function calculateTimeBeforeOpen(openTime,time){
@@ -129,15 +150,16 @@ var client = mqtt.connect({
 
 client.on('connect', function () {
     console.log("MQTT Connect");
-    client.subscribe('tk/demo', function (err) {
+    client.subscribe('tk/demo2', function (err) {
         if (err) {
             console.log(err);
         }
     });
 });
 
-client.on('message', function (topic, message) {
+client.on('message', async (topic, message) => {
     console.log(message.toString());
+    
 });
 
 app.get('/command/:string', (req, res) => {
@@ -690,7 +712,7 @@ app.put('/addHoliday/:day', async (req, res) => {
 
 app.put('/editCrossFade:val', async (req, res) => {
     // const fid = '1'
-    value = req.params.val
+    const value = req.params.val
     try{
         const radios = await Radio.findByIdAndUpdate(fid, {$set: {'crossFade' : value}})
         res.json(radios)
@@ -699,66 +721,6 @@ app.put('/editCrossFade:val', async (req, res) => {
         res.status(400).json(error)
     }
 })
-
-app.get('/stopPlaying', async (req, res) => {
-    if(setTimeOut.length>0){
-        //console.log(1234567890)
-        for (let id in setTimeOut){
-            console.log(setTimeOut[id]);
-            clearTimeout(setTimeOut[id]);
-            console.log(setTimeOut[id])
-        }
-        //console.log(setTimeOut)
-        setTimeOut=[]
-    }
-})
-
-app.get('/play', async (req, res) => {
-    // const fid = '1'
-    if(true){
-        state = 'play'
-        try{
-            const radios = await Radio.findById(fid)
-            const playlist = radios.playlist
-            let waitTime = 0
-            var i
-            for(i=0; i<playlist.length; i++){
-                const nextFile = playlist[i]
-                console.log(nextFile)
-                const file = await File.findById(nextFile)
-                const pid = file.pid
-                const fileType = file.fileType
-                let vol = radios.mainVolume
-                if(fileType === 'jingle'){
-                    vol = radios.mainVolume + radios.jingleVolume
-                }
-                else if(fileType === 'music'){
-                    vol = radios.mainVolume + radios.musicVolume
-                }
-                else if(fileType === 'spot'){
-                    vol = radios.mainVolume + radios.spotVolume
-                }
-                else if(fileType === 'storeIdentity'){
-                    vol = radios.mainVolume + radios.storeIdentityVolume
-                }
-                console.log(vol)
-                //const length = file.fileLength
-                //const waitTime = calculateWaitTime(length)
-                console.log(waitTime)
-                //client.publish("tk/demo", `mpc volume ${vol}`)
-                //client.publish("tk/demo", `mpc play ${pid}`)
-                timeOut = callCommand(pid, vol, waitTime)
-                const length = file.fileLength
-                waitTime = waitTime + calculateWaitTime(length)
-                //await sleep(10000)
-                //clearTimeout(x)
-            }
-            //state = 'idle'
-        }catch (error) {
-            res.status(400).json(error)
-        }
-    }
-}),
 
 app.put('/selectSpeechSoundBeforeOpen/:sound', async (req,res) => {
     // const fid = '1'
@@ -786,6 +748,32 @@ app.put('/interrupt/:interruptFile', async (req,res) => {
     // const fid = '1'
     const interruptFile = req.params.interruptFile
     client.publish("tk/demo",`interrupt ${interruptFile}`)
+})
+
+app.put('/setHeartbeatTime:heartbeatTime', async (req,res) => {
+    const heartbeatTime = req.params.heartbeatTime
+    try{
+        const radios = await Radio.findByIdAndUpdate(fid, {$set: {'heartbeatTime' : heartbeatTime}})
+        res.json(radios)
+    }catch (error) {
+        res.status(400).json(error)
+    }
+})
+
+app.put('/setAutoSync/', async (req,res) => {
+    const date = req.body.dateAutoSync
+    const time = req.body.timeAutoSync
+        try{
+            const payload = {}
+            payload[`${date}SyncTime`] = time
+            console.log(payload)
+            const radios = await Radio.update({"_id": fid}, {
+                $push: payload
+            })
+            res.json(radios)
+        }catch (error) {
+            res.status(400).json(error)
+        }
 })
 
 app.use((req, res, next) => {

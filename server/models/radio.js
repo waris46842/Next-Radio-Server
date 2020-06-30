@@ -19,6 +19,13 @@ const radioSchema = new Schema({
     SatCloseTime: String,
     SunOpenTime: String,
     SunCloseTime: String,
+    MonSyncTime: Array,
+    TueSyncTime: Array,
+    WedSyncTime: Array,
+    ThuSyncTime: Array,
+    FriSyncTime: Array,
+    SatSyncTime: Array,
+    SunSyncTime: Array,
     mainVolume: Number,
     jingleVolume: Number,
     musicVolume: Number,
@@ -32,7 +39,17 @@ const radioSchema = new Schema({
     timeSpeechAfterClose: Number,
     holiday: Array,
     playlist: Array,
-    crossFade: Number
+    playlist1: Array,
+    playlist2: Array,
+    playlist3: Array,
+    playlist4: Array,
+    playlist5: Array,
+    defaultPlaylist: Array,
+    crossFade: Number,
+    heartbeatTime: Number,
+    timeAutoSync: Number,
+    dateAutoSync: Number,
+    activeLastTime: Number
     
 }, { timestamps: true, versionKey: false })
 
