@@ -15,6 +15,17 @@
     <input v-model="silentAfterClose" placeholder="silentAfterClose">
     <button @click="changeSilentAfterClose()">Submit</button>
     <p>changeSilentAfterClose</p>
+
+    <input v-model="speechBeforeOpen" placeholder="speechBeforeOpen">
+    <button @click="changeSpeechTimeBeforeOpen()">Submit</button>
+    <p>changeSpeechTimeBeforeOpen</p>
+    <input v-model="speechAfterClose" placeholder="speechAfterClose">
+    <button @click="changeSpeechTimeAfterClose()">Submit</button>
+    <p>changeSpeechTimeAfterClose</p>
+
+
+
+
     <input v-model="mainVolume" placeholder="mainVolume">
     <button @click="setMainVolume()">Submit</button>
     <p>setMainVolume</p>
@@ -42,13 +53,13 @@
     <button @click="editCrossFade()">Submit</button>
     <p>editCrossFade</p>
 
-    <input v-model="speechSoundBeforeOpen" placeholder="speechSoundBeforeOpen">
+    <!-- <input v-model="speechSoundBeforeOpen" placeholder="speechSoundBeforeOpen">
     <button @click="selectSpeechSoundBeforeOpen()">Submit</button>
     <p>selectSpeechSoundBeforeOpen</p>
 
     <input v-model="speechSoundAfterClose" placeholder="speechSoundAfterClose">
     <button @click="selectSpeechSoundAfterClose()">Submit</button>
-    <p>selectSpeechSoundAfterClose</p>
+    <p>selectSpeechSoundAfterClose</p> -->
 
     <!-- <input v-model="resetVolumeTime" placeholder="resetVolumeTime">
     <button @click="resetVolumeTime()">Submit</button>
@@ -59,6 +70,7 @@
     <p>editUploadLogFileSize</p> -->
 
     <input v-model="interrupt" placeHolder="interrupt">
+    <input v-model="timeToInterrupt" placeholder="timeToInterrupt">
     <button @click="interruptFile()">Submit</button>
     <p>interruptFile</p>
 
@@ -166,18 +178,34 @@ export default {
       const res = await axios.put('http://localhost:5000/editCrossFade' + val)
       console.log(res)
     },
-    async selectSpeechSoundBeforeOpen() {
-      console.log(this.speechSoundBeforeOpen);
-      let sound = this.speechSoundBeforeOpen;
-      const res = await axios.put('http://localhost:5000/selectSpeechSoundBeforeOpen' + sound)
+    // async selectSpeechSoundBeforeOpen() {
+    //   console.log(this.speechSoundBeforeOpen);
+    //   let sound = this.speechSoundBeforeOpen;
+    //   const res = await axios.put('http://localhost:5000/selectSpeechSoundBeforeOpen/' + sound)
+    //   console.log(res)
+    // },
+    // async selectSpeechSoundAfterClose() {
+    //   console.log(this.speechSoundAfterClose);
+    //   let sound = this.speechSoundAfterClose;
+    //   const res = await axios.put('http://localhost:5000/selectSpeechSoundAfterClose' + sound)
+    //   console.log(res)
+    // },
+
+    async changeSpeechTimeBeforeOpen() {
+      console.log(this.speechBeforeOpen);
+      let sound = this.speechBeforeOpen;
+      const res = await axios.put('http://localhost:5000/setSpeechTimeBeforeOpen/' + sound)
       console.log(res)
     },
-    async selectSpeechSoundAfterClose() {
-      console.log(this.speechSoundAfterClose);
-      let sound = this.speechSoundAfterClose;
-      const res = await axios.put('http://localhost:5000/selectSpeechSoundAfterClose' + sound)
+
+    async changeSpeechTimeAfterClose() {
+      console.log(this.speechAfterClose);
+      let sound = this.speechAfterClose;
+      const res = await axios.put('http://localhost:5000/setSpeechTimeAfterClose/' + sound)
       console.log(res)
     },
+
+    
 
     // async editUploadLogFileSize() {
     //   console.log(this.uploadLogFileLogSize);
@@ -193,10 +221,11 @@ export default {
     //   console.log(res)
     // },
 
-    interruptFile() {
+    async interruptFile() {
       console.log(this.interrupt)
-      let interruptFile = this.interrupt
-      axios.put('http://localhost:5000/interrupt/' + interruptFile)
+      let payload = {'file':this.interrupt,'time':this.timeToInterrupt}
+      const res = await axios.put('http://localhost:5000/interrupt/',payload)
+      console.log(res)
     },
 
     async setHeartbeatTime() {
