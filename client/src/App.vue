@@ -78,10 +78,16 @@
     <button @click="setHeartbeatTime()">Submit</button>
     <p>setHeartbeatTime</p>
 
+    <input v-model="timeForLog" placeholder="timeForLog">
+    <button @click="setTimeForLog()">Submit</button>
+    <p>setTimeForLog</p>
+
     <input v-model="dateAutoSync" placeholder="dateAutoSync">
     <input v-model="timeAutoSync" placeholder="timeAutoSync">
     <button @click="setAutoSync()">Submit</button>
     <p>setAutoSync</p>
+
+
   </div>
 </template>
 
@@ -232,6 +238,15 @@ export default {
       console.log(this.heartbeatTime)
       let time = this.heartbeatTime
       const res = await axios.put('http://localhost:5000/setHeartbeatTime' + time)
+      console.log(res)
+    },
+
+    async setTimeForLog() {
+      console.log(this.timeForLog)
+      let time = this.timeForLog
+      let arrayOfTime = time.split(',')
+      let payload = {'timeForLog':arrayOfTime}
+      const res = await axios.put('http://localhost:5000/setTimeForLog',payload)
       console.log(res)
     },
 

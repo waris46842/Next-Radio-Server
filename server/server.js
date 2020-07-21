@@ -4,7 +4,6 @@ var mongoose = require('mongoose')
 const bodyParser = require(  'body-parser');
 const Radio = require('./models/radio')
 const File = require('./models/file')
-const Command = require('./models/command')
 
 setInterval(changeColor, 5000)
 
@@ -38,7 +37,8 @@ async function changeColor(){
     const x = await Radio.findByIdAndUpdate(fid, {$set: payload})
 }
 
-var mongo_uri = "mongodb+srv://waris46842:Gamerpg46842@next-radio.scrbg.mongodb.net/radio?retryWrites=true&w=majority"
+//var mongo_uri = "mongodb+srv://waris46842:4684246842@next-radio.scrbg.mongodb.net/radio?retryWrites=true&w=majority"
+var mongo_uri = 'mongodb://waris46842:46842@192.168.1.194:27017/Next-Radio?authSource=admin';
 mongoose.Promise = global.Promise;
 mongoose.connect(mongo_uri, { useNewUrlParser: true }).then(
   () => {
@@ -349,6 +349,16 @@ app.put('/setHeartbeatTime:heartbeatTime', async (req,res) => {
     const heartbeatTime = req.params.heartbeatTime
     try{
         const radios = await Radio.findByIdAndUpdate(fid, {$set: {'heartbeatTime' : heartbeatTime}})
+        res.json(radios)
+    }catch (error) {
+        res.status(400).json(error)
+    }
+})
+
+app.put('/setTimeForLog/', async (req,res) => {
+    const timeForLog = req.params.timeForLog
+    try{
+        const radios = await Radio.findByIdAndUpdate(fid, {$set: {'timeForLog' : timeForLog}})
         res.json(radios)
     }catch (error) {
         res.status(400).json(error)
