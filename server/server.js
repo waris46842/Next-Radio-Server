@@ -4,6 +4,7 @@ var mongoose = require('mongoose')
 const bodyParser = require(  'body-parser');
 const Radio = require('./models/radio')
 const File = require('./models/file')
+const Group = require('./models/group')
 
 setInterval(changeColor, 5000)
 
@@ -40,15 +41,20 @@ async function changeColor(){
 //var mongo_uri = "mongodb+srv://waris46842:4684246842@next-radio.scrbg.mongodb.net/radio?retryWrites=true&w=majority"
 var mongo_uri = 'mongodb://waris46842:46842@192.168.1.194:27017/Next-Radio?authSource=admin';
 mongoose.Promise = global.Promise;
-mongoose.connect(mongo_uri, { useNewUrlParser: true }).then(
-  () => {
-    console.log("[success] task 2 : connected to the database ");
-  },
-  error => {
-    console.log("[failed] task 2 " + error);
-    process.exit();
-  }
-);
+async function connectToMongoDB(){
+    mongoose.connect(mongo_uri, { useNewUrlParser: true }).then(
+        () => {
+          console.log("[success] task 2 : connected to the database ");
+          clearInterval(db)
+        },
+        error => {
+          console.log("[failed] task 2 " + error);
+          //process.exit();
+        }
+      );
+}
+
+var db = setInterval(connectToMongoDB, 2000)
 
 const app = express();
 app.use(express.json())
@@ -66,7 +72,8 @@ app.listen(port, () => {
 //##################mqtt#####################
 var mqtt = require('mqtt');
 
-const MQTT_SERVER = "test.mosquitto.org";
+//const MQTT_SERVER = "test.mosquitto.org";
+const MQTT_SERVER = "192.168.1.194";
 const MQTT_PORT = "1883";
 
 const dictionary = {
@@ -91,7 +98,7 @@ var client = mqtt.connect({
 
 client.on('connect', function () {
     console.log("MQTT Connect");
-    client.subscribe('tk/demo2', function (err) {
+    client.subscribe('porsche', function (err) {
         if (err) {
             console.log(err);
         }
@@ -108,12 +115,12 @@ app.get('/command/:string', (req, res) => {
     tmp = cmd.split(" ");
     if (tmp.length == 1){
         let x = dictionary[tmp[0]]
-        client.publish("tk/demo", x);
+        client.publish("porsche", x);
         res.send(x);
     }
     else if (tmp.length == 2){
         let x = dictionary[tmp[0]] + tmp[1]
-        client.publish("tk/demo", x);
+        client.publish("porsche", x);
         res.send(x);
     }
     else{
@@ -300,7 +307,7 @@ app.put('/editCrossFade:val', async (req, res) => {
     try{
         const radios = await Radio.findByIdAndUpdate(fid, {$set: {'crossFade' : value}})
         res.json(radios)
-        client.publish("tk/demo", `mpc crossfade ${value}`)
+        client.publish("porsche", `mpc crossfade ${value}`)
     }catch (error) {
         res.status(400).json(error)
     }
@@ -341,7 +348,7 @@ app.put('/interrupt/', async (req,res) => {
     const interruptFile = payload.file
     const timeToPlay = payload.time
     const radios = Radio.findById(fid)
-    client.publish("tk/demo",`interrupt ${timeToPlay}/${interruptFile}`)
+    client.publish("porsche",`interrupt ${timeToPlay}/${interruptFile}`)
     res.sendStatus(200)
 })
 
